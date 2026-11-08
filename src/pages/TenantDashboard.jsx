@@ -411,11 +411,11 @@ export default function TenantDashboard() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs text-slate-500 mb-1">Tgl Mulai</label>
-                    <input required value={formOrder.tgl_mulai} type="date" className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500 [color-scheme:dark]" onChange={e => setFormOrder({...formOrder, tgl_mulai: e.target.value, plat_nomor: ''})} />
+                    <input required value={formOrder.tgl_mulai} type="date" className="w-1/2 sm:w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500 [color-scheme:dark]" onChange={e => setFormOrder({...formOrder, tgl_mulai: e.target.value, plat_nomor: ''})} />
                   </div>
                   <div>
                     <label className="block text-xs text-slate-500 mb-1">Tgl Selesai (Kembali)</label>
-                    <input required value={formOrder.tgl_selesai} type="date" className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500 [color-scheme:dark]" onChange={e => setFormOrder({...formOrder, tgl_selesai: e.target.value, plat_nomor: ''})} />
+                    <input required value={formOrder.tgl_selesai} type="date" className="w-1/2 sm:w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500 [color-scheme:dark]" onChange={e => setFormOrder({...formOrder, tgl_selesai: e.target.value, plat_nomor: ''})} />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

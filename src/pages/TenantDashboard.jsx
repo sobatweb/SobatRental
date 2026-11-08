@@ -397,9 +397,8 @@ export default function TenantDashboard() {
       {/* ======================= MODAL: ORDER ======================= */}
       {showOrderModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">     <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl w-full max-w-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div className="flex justify-between items-center mb-6">
+            <div className="mb-6">
               <h3 className="text-xl font-bold text-white">{isEditMode ? 'Manajemen Order' : 'Buat Order Baru'}</h3>
-              <button onClick={() => setShowOrderModal(false)} className="text-slate-400 hover:text-white"><X size={24}/></button>
             </div>
             <form onSubmit={submitOrder} className="space-y-5">
               
@@ -449,9 +448,14 @@ export default function TenantDashboard() {
                 <div><label className="block text-xs text-slate-500 mb-1">Jaminan Berkas/Barang</label><input required value={formOrder.jaminan_teks} type="text" placeholder="KTP Asli + Motor Vario B1234" className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500" onChange={e => setFormOrder({...formOrder, jaminan_teks: e.target.value})} /></div>
               </div>
 
-              <button disabled={isSubmitting} type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg">
-                {isSubmitting && <Loader2 className="animate-spin" size={18} />} {isEditMode ? 'Simpan Perubahan' : 'Terbitkan Order'}
-              </button>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setShowOrderModal(false)} className="w-1/3 bg-slate-800 hover:bg-slate-700 text-white font-bold py-3.5 rounded-xl transition">
+                  Batal
+                </button>
+                <button disabled={isSubmitting} type="submit" className="w-2/3 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg">
+                  {isSubmitting && <Loader2 className="animate-spin" size={18} />} {isEditMode ? 'Simpan' : 'Terbitkan'}
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -460,9 +464,8 @@ export default function TenantDashboard() {
       {/* ======================= MODAL: ARMADA ======================= */}
       {showArmadaModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">    <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl w-full max-w-sm shadow-2xl">
-            <div className="flex justify-between items-center mb-6">
+            <div className="mb-6">
               <h3 className="text-xl font-bold text-white">{isEditMode ? 'Edit Armada' : 'Tambah Armada'}</h3>
-              <button onClick={() => setShowArmadaModal(false)} className="text-slate-400 hover:text-white"><X size={24}/></button>
             </div>
             <form onSubmit={submitArmada} className="space-y-4">
               <div><label className="block text-sm text-slate-400 mb-1">Merk / Tipe Kendaraan</label><input required value={formArmada.merk} type="text" className="w-full bg-slate-950 border border-slate-800 text-white rounded-lg px-4 py-2 outline-none focus:border-blue-500" onChange={e => setFormArmada({...formArmada, merk: e.target.value})} /></div>
@@ -471,7 +474,14 @@ export default function TenantDashboard() {
                 <div><label className="block text-sm text-slate-400 mb-1">Kategori</label><select value={formArmada.kategori} className="w-full bg-slate-950 border border-slate-800 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500" onChange={e => setFormArmada({...formArmada, kategori: e.target.value})}><option value="Mobil">Mobil</option><option value="Motor">Motor</option></select></div>
                 <div><label className="block text-sm text-slate-400 mb-1">Kondisi</label><select value={formArmada.status_unit} className="w-full bg-slate-950 border border-slate-800 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500 font-bold" onChange={e => setFormArmada({...formArmada, status_unit: e.target.value})}><option value="Aktif">Aktif</option><option value="Maintenance">Maintenance</option></select></div>
               </div>
-              <button disabled={isSubmitting} type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 mt-2">{isSubmitting && <Loader2 className="animate-spin" size={18} />} Simpan</button>
+              <div className="flex gap-3 mt-4">
+                <button type="button" onClick={() => setShowArmadaModal(false)} className="w-1/3 bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-lg transition">
+                  Batal
+                </button>
+                <button disabled={isSubmitting} type="submit" className="w-2/3 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2">
+                  {isSubmitting && <Loader2 className="animate-spin" size={18} />} Simpan
+                </button>
+              </div>
             </form>
           </div>
         </div>

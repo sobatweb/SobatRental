@@ -86,7 +86,7 @@ export default function TenantDashboard() {
     pesan += `Telah Dibayar: Rp ${Number(o.dibayar).toLocaleString('id-ID')}\n`;
     if (Number(o.sisa) > 0) pesan += `Sisa Tagihan: Rp ${Number(o.sisa).toLocaleString('id-ID')}\n`;
     if (Number(o.deposit_uang) > 0) pesan += `Deposit Ditahan: Rp ${Number(o.deposit_uang).toLocaleString('id-ID')}\n`;
-    pesan += `\nMohon kabari kami jika ada kendala. Terima kasih!`;
+    pesan += `\nMohon kabari kami jika ada kendala. Terima kasih! `;
    
     let noWa = String(o.no_telp).replace(/\D/g, '');
     if (noWa.startsWith('0')) noWa = '62' + noWa.substring(1);

@@ -199,7 +199,7 @@ export default function TenantDashboard() {
             </div>
             <div className="bg-slate-900 p-5 rounded-2xl border border-amber-900/50 shadow-xl relative overflow-hidden">
               <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-2 flex items-center gap-2"><Clock size={14}/> Jatuh Tempo Hari Ini</p>
-              <h3 className="text-3xl font-black text-amber-500 mt-1">{pengembalianHariIni.length} <span className="text-xs font-medium">Mobil</span></h3>
+              <h3 className="text-3xl font-black text-amber-500 mt-1">{pengembalianHariIni.length} <span className="text-xs font-medium">Kendaraan</span></h3>
             </div>
             <div className="bg-slate-900 p-5 rounded-2xl border border-red-900/50 shadow-xl relative overflow-hidden">
               <p className="text-xs font-bold text-red-500 uppercase tracking-wider mb-2 flex items-center gap-2"><AlertCircle size={14}/> Terlambat / Overdue</p>

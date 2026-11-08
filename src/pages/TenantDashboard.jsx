@@ -396,8 +396,7 @@ export default function TenantDashboard() {
 
       {/* ======================= MODAL: ORDER ======================= */}
       {showOrderModal && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-[100]">
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl w-full max-w-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">     <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl w-full max-w-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-white">{isEditMode ? 'Manajemen Order' : 'Buat Order Baru'}</h3>
               <button onClick={() => setShowOrderModal(false)} className="text-slate-400 hover:text-white"><X size={24}/></button>
@@ -460,8 +459,7 @@ export default function TenantDashboard() {
 
       {/* ======================= MODAL: ARMADA ======================= */}
       {showArmadaModal && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-[100]">
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl w-full max-w-sm shadow-2xl">
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">    <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl w-full max-w-sm shadow-2xl">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-white">{isEditMode ? 'Edit Armada' : 'Tambah Armada'}</h3>
               <button onClick={() => setShowArmadaModal(false)} className="text-slate-400 hover:text-white"><X size={24}/></button>

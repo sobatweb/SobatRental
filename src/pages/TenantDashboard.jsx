@@ -78,7 +78,15 @@ export default function TenantDashboard() {
     if (!o.no_telp) return alert("Nomor telepon kosong!");
     const tglMulai = new Date(o.tgl_mulai).toLocaleDateString('id-ID', {day:'2-digit', month:'short'});
     const tglSelesai = new Date(o.tgl_selesai).toLocaleDateString('id-ID', {day:'2-digit', month:'short'});
-    let pesan = `Halo kak ${o.klien}`;
+    
+    // Teks penuh dikembalikan
+    let pesan = `Halo kak ${o.klien}, ini rincian sewa dari rental kami:\n\n`;
+    pesan += `Unit: ${o.plat}\nJadwal: ${tglMulai} s/d ${tglSelesai}\nJaminan: ${o.jaminan_teks}\n\n`;
+    pesan += `Total Sewa: Rp ${Number(o.total_harga).toLocaleString('id-ID')}\n`;
+    pesan += `Telah Dibayar: Rp ${Number(o.dibayar).toLocaleString('id-ID')}\n`;
+    if (Number(o.sisa) > 0) pesan += `Sisa Tagihan: Rp ${Number(o.sisa).toLocaleString('id-ID')}\n`;
+    if (Number(o.deposit_uang) > 0) pesan += `Deposit Ditahan: Rp ${Number(o.deposit_uang).toLocaleString('id-ID')}\n`;
+    pesan += `\nMohon kabari kami jika ada kendala. Terima kasih!`;
    
     let noWa = String(o.no_telp).replace(/\D/g, '');
     if (noWa.startsWith('0')) noWa = '62' + noWa.substring(1);
@@ -91,7 +99,6 @@ export default function TenantDashboard() {
   const ketersediaanHariIni = useMemo(() => {
     const tersewa = new Set();
     data.orders.forEach(o => {
-      // DRAF ditambahkan ke pengecualian agar tidak ngeblok jadwal
       if (['Dikembalikan', 'Selesai', 'Dibatalkan', 'Draf'].includes(o.status_order)) return;
       if (todayStr >= getLocalDateString(o.tgl_mulai) && todayStr <= getLocalDateString(o.tgl_selesai)) tersewa.add(o.plat);
     });
@@ -114,7 +121,7 @@ export default function TenantDashboard() {
     return hasil;
   }, [data, filterTgl]);
 
-  // 3. Dropdown Unit Buat Order (Cek Irisan Jadwal Strictly)
+  // 3. Dropdown Unit Buat Order
   const availableCarsForBooking = useMemo(() => {
     return data.kendaraan.filter(k => {
       if (k.status_unit === 'Maintenance') return false; 
@@ -149,7 +156,6 @@ export default function TenantDashboard() {
   const curYear = new Date().getFullYear();
   let [incomeAllTime, incomeMonth, incomeYear] = [0, 0, 0];
   data.orders.forEach(o => {
-    // Uang Draf juga tidak dihitung sbg kas masuk resmi
     if (['Dibatalkan', 'Draf'].includes(o.status_order)) return; 
     const d = Number(o.dibayar) || 0;
     const sDate = new Date(o.tgl_mulai);
@@ -311,7 +317,7 @@ export default function TenantDashboard() {
         </div>
       )}
 
-      {/* ==================== TABEL TRANSAKSI (GABUNGAN ORDER & RINGKASAN) ==================== */}
+      {/* ==================== TABEL TRANSAKSI ==================== */}
       {(activeTab === 'ringkasan' || activeTab === 'order') && (
         <div className="space-y-4">
           <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mt-6">
@@ -343,11 +349,11 @@ export default function TenantDashboard() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-slate-950/50 text-slate-400 border-b border-slate-800">
                 <tr>
-                  <th className="px-6 py-4 font-semibold">Status</th>
-                  <th className="px-6 py-4 font-semibold">Penyewa & Kontak</th>
-                  <th className="px-6 py-4 font-semibold">Unit & Tanggal Sewa</th>
-                  <th className="px-6 py-4 font-semibold">Keuangan & Deposit</th>
-                  <th className="px-6 py-4 font-semibold text-right">Aksi</th>
+                  <th className="px-4 sm:px-6 py-4 font-semibold">Status</th>
+                  <th className="px-4 sm:px-6 py-4 font-semibold">Penyewa & Kontak</th>
+                  <th className="px-4 sm:px-6 py-4 font-semibold">Unit & Jadwal</th>
+                  <th className="px-4 sm:px-6 py-4 font-semibold">Keuangan & Deposit</th>
+                  <th className="px-4 sm:px-6 py-4 font-semibold text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/50">
@@ -356,17 +362,26 @@ export default function TenantDashboard() {
                   const c = s==='Dipesan'?'text-blue-400 border-blue-800 bg-blue-900/50':s==='Diambil'?'text-amber-400 border-amber-800 bg-amber-900/50':s==='Dikembalikan'?'text-purple-400 border-purple-800 bg-purple-900/50':s==='Selesai'?'text-green-400 border-green-800 bg-green-900/50':s==='Dibatalkan'?'text-red-400 border-red-800 bg-red-900/50':'text-slate-300 bg-slate-800';
                   return (
                     <tr key={o.id} className="hover:bg-slate-800/30 transition">
-                      <td className="px-6 py-4"><span className={`px-3 py-1 rounded-full text-xs font-bold border ${c}`}>{s.toUpperCase()}</span></td>
-                      <td className="px-6 py-4"><p className="font-bold text-white">{o.klien}</p><p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5"><Phone size={12}/> {o.no_telp || '-'}</p></td>
-                      <td className="px-6 py-4"><p className="font-bold text-blue-400 mb-1">{o.plat}</p><p className="text-slate-400 text-xs">{new Date(o.tgl_mulai).toLocaleDateString('id-ID', {day:'2-digit', month:'short'})} <span className="mx-1">-</span> {new Date(o.tgl_selesai).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'})}</p></td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4"><span className={`px-3 py-1 rounded-full text-xs font-bold border ${c}`}>{s.toUpperCase()}</span></td>
+                      <td className="px-4 sm:px-6 py-4"><p className="font-bold text-white">{o.klien}</p><p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5"><Phone size={12}/> {o.no_telp || '-'}</p></td>
+                      
+                      {/* FIX: Tanggal Mulai dan Selesai dipisah 2 baris (stacked) untuk memperkecil lebar di mobile */}
+                      <td className="px-4 sm:px-6 py-4">
+                        <p className="font-bold text-blue-400 mb-1">{o.plat}</p>
+                        <div className="flex flex-col text-[11px] sm:text-xs text-slate-400 space-y-0.5">
+                          <div><span className="inline-block w-8 text-slate-500">Out:</span> {new Date(o.tgl_mulai).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'})}</div>
+                          <div><span className="inline-block w-8 text-slate-500">In:</span> {new Date(o.tgl_selesai).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'})}</div>
+                        </div>
+                      </td>
+
+                      <td className="px-4 sm:px-6 py-4">
                         <div className="flex flex-col gap-1">
                           <div className="flex gap-2 items-center"><span className="text-slate-500 text-[10px] uppercase w-12">Sewa</span>{o.sisa > 0 ? <span className="text-red-400 text-xs font-bold">Sisa Rp {Number(o.sisa).toLocaleString('id-ID')}</span> : <span className="text-green-400 text-xs font-bold">LUNAS (Rp {Number(o.dibayar).toLocaleString('id-ID')})</span>}</div>
                           {Number(o.deposit_uang) > 0 && <div className="flex gap-2 items-center"><span className="text-slate-500 text-[10px] uppercase w-12">Titip</span><span className="text-amber-400 text-xs font-bold">Rp {Number(o.deposit_uang).toLocaleString('id-ID')} (Ditahan)</span></div>}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <button onClick={() => handleKirimWA(o)} className="text-green-500 hover:text-white transition p-2 rounded-lg hover:bg-green-900/50 mr-2" title="Kirim Nota via WA"><MessageCircle size={16}/></button>
+                      <td className="px-4 sm:px-6 py-4 text-right">
+                        <button onClick={() => handleKirimWA(o)} className="text-green-500 hover:text-white transition p-2 rounded-lg hover:bg-green-900/50 mr-1 sm:mr-2" title="Kirim Nota via WA"><MessageCircle size={16}/></button>
                         <button onClick={() => openEditOrder(o)} className="text-slate-400 hover:text-blue-400 transition p-2 rounded-lg hover:bg-slate-800"><Edit size={16}/></button>
                       </td>
                     </tr>
@@ -391,7 +406,9 @@ export default function TenantDashboard() {
               
               <div className="bg-slate-950/50 p-4 rounded-xl border border-slate-800 space-y-4">
                 <h4 className="text-sm font-bold text-slate-300 uppercase">1. Penjadwalan Sewa (Pilih Tgl Dulu)</h4>
-                <div className="grid grid-cols-2 gap-4">
+                
+                {/* FIX: Input Tanggal menjadi grid-cols-1 di mobile, tapi grid-cols-2 di tablet/desktop */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs text-slate-500 mb-1">Tgl Mulai</label>
                     <input required value={formOrder.tgl_mulai} type="date" className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500 [color-scheme:dark]" onChange={e => setFormOrder({...formOrder, tgl_mulai: e.target.value, plat_nomor: ''})} />
@@ -401,7 +418,7 @@ export default function TenantDashboard() {
                     <input required value={formOrder.tgl_selesai} type="date" className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500 [color-scheme:dark]" onChange={e => setFormOrder({...formOrder, tgl_selesai: e.target.value, plat_nomor: ''})} />
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs text-slate-500 mb-1">Pilih Unit (Hanya Yg Tersedia)</label>
                     <select required value={formOrder.plat_nomor} className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500" onChange={e => setFormOrder({...formOrder, plat_nomor: e.target.value})}>
@@ -421,14 +438,14 @@ export default function TenantDashboard() {
 
               <div className="bg-slate-950/50 p-4 rounded-xl border border-slate-800 space-y-4">
                 <h4 className="text-sm font-bold text-slate-300 uppercase">2. Profil & Keuangan</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div><label className="block text-xs text-slate-500 mb-1">Nama Penyewa</label><input required value={formOrder.nama_klien} type="text" className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500" onChange={e => setFormOrder({...formOrder, nama_klien: e.target.value})} /></div>
                   <div><label className="block text-xs text-slate-500 mb-1">No. WA / Telepon</label><input required value={formOrder.no_telp} type="tel" placeholder="0812..." className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500" onChange={e => setFormOrder({...formOrder, no_telp: e.target.value})} /></div>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div><label className="block text-xs text-slate-500 mb-1">Total Sewa (Rp)</label><input required value={formOrder.total_harga} type="number" className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500" onChange={e => setFormOrder({...formOrder, total_harga: e.target.value})} /></div>
-                  <div><label className="block text-xs text-blue-400 font-bold mb-1">Telah Dibayar (Rp)</label><input required value={formOrder.dibayar} type="number" className="w-full bg-slate-900 border border-blue-900/50 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500" onChange={e => setFormOrder({...formOrder, dibayar: e.target.value})} /></div>
-                  <div><label className="block text-xs text-amber-500 font-bold mb-1">Deposit Ditahan (Rp)</label><input value={formOrder.deposit_uang} type="number" placeholder="0" className="w-full bg-slate-900 border border-amber-900/50 text-white rounded-lg px-3 py-2 outline-none focus:border-amber-500" onChange={e => setFormOrder({...formOrder, deposit_uang: e.target.value})} /></div>
+                  <div><label className="block text-xs text-blue-400 font-bold mb-1">Telah Dibayar</label><input required value={formOrder.dibayar} type="number" className="w-full bg-slate-900 border border-blue-900/50 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500" onChange={e => setFormOrder({...formOrder, dibayar: e.target.value})} /></div>
+                  <div><label className="block text-xs text-amber-500 font-bold mb-1">Deposit Ditahan</label><input value={formOrder.deposit_uang} type="number" placeholder="0" className="w-full bg-slate-900 border border-amber-900/50 text-white rounded-lg px-3 py-2 outline-none focus:border-amber-500" onChange={e => setFormOrder({...formOrder, deposit_uang: e.target.value})} /></div>
                 </div>
                 <div><label className="block text-xs text-slate-500 mb-1">Jaminan Berkas/Barang</label><input required value={formOrder.jaminan_teks} type="text" placeholder="KTP Asli + Motor Vario B1234" className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 outline-none focus:border-blue-500" onChange={e => setFormOrder({...formOrder, jaminan_teks: e.target.value})} /></div>
               </div>
